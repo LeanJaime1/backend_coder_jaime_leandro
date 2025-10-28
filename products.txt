@@ -1,0 +1,72 @@
+[
+  {
+    "id": "p1",
+    "title": "Auriculares Bluetooth",
+    "description": "Auriculares inalámbricos con cancelación de ruido y micrófono incorporado.",
+    "code": "AUR-001",
+    "price": 24999,
+    "status": true,
+    "stock": 50,
+    "category": "Tecnología",
+    "thumbnails": [
+      "/images/auriculares1.webp",
+      "/images/auriculares2.webp"
+    ]
+  },
+  {
+    "id": "p2",
+    "title": "Zapatillas Running",
+    "description": "Zapatillas livianas con suela de gel ideales para correr o entrenar.",
+    "code": "ZAP-002",
+    "price": 37999,
+    "status": true,
+    "stock": 20,
+    "category": "Deportes",
+    "thumbnails": [
+      "/images/zapatillas1.webp",
+      "/images/zapatillas2.webp"
+    ]
+  },
+  {
+    "id": "p3",
+    "title": "Smartwatch Deportivo",
+    "description": "Reloj inteligente con monitoreo de ritmo cardíaco, pasos y sueño.",
+    "code": "SMW-003",
+    "price": 45999,
+    "status": true,
+    "stock": 35,
+    "category": "Tecnología",
+    "thumbnails": [
+      "/images/smartwatch1.webp",
+      "/images/smartwatch2.webp"
+    ]
+  },
+  {
+    "id": "p4",
+    "title": "Mochila Antirrobo",
+    "description": "Mochila resistente al agua con puerto USB y cierres ocultos.",
+    "code": "MOCH-004",
+    "price": 22999,
+    "status": true,
+    "stock": 40,
+    "category": "Accesorios",
+    "thumbnails": [
+      "/images/mochila1.webp",
+      "/images/mochila2.webp"
+    ]
+  },
+  {
+    "id": "p5",
+    "title": "Lámpara LED Escritorio",
+    "description": "Lámpara regulable con carga inalámbrica para celulares.",
+    "code": "LAM-005",
+    "price": 15999,
+    "status": true,
+    "stock": 25,
+    "category": "Hogar",
+    "thumbnails": [
+      "/images/lampara1.webp",
+      "/images/lampara2.webp"
+    ]
+  }
+]
