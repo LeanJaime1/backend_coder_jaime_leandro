@@ -10,7 +10,7 @@ server.use(express.json())
 
 
 const PRODUCTS_FILE ='products.json';
-const CARTS_FILE = './carts.txt';
+const CARTS_FILE = './carts.json';
 
 
 
