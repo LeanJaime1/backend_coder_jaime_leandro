@@ -1,0 +1,158 @@
+[
+  {
+    "id": 1,
+    "status": true,
+    "title": "Aspiradora Robótica",
+    "description": "Aspira y mapea automáticamente",
+    "code": "ASP-ROB-001",
+    "price": 350.5,
+    "stock": 25,
+    "category": "Hogar",
+    "thumbnails": [
+      "/img/robot.webp"
+    ]
+  },
+  {
+    "id": 2,
+    "status": true,
+    "title": "Auriculares Bluetooth Deportivos",
+    "description": "Resistentes al sudor, con cancelación de ruido",
+    "code": "AUDIO-BT-002",
+    "price": 75.99,
+    "stock": 150,
+    "category": "Electrónica",
+    "thumbnails": [
+      "/img/auris_deportivos.webp"
+    ]
+  },
+  {
+    "id": 3,
+    "status": true,
+    "title": "Smartwatch Serie 7",
+    "description": "Monitor de ritmo cardíaco, GPS y pagos NFC",
+    "code": "SW-SERIE-7",
+    "price": 299,
+    "stock": 60,
+    "category": "Electrónica",
+    "thumbnails": [
+      "/img/smartwatch.webp"
+    ]
+  },
+  {
+    "id": 4,
+    "status": true,
+    "title": "Cafetera Programable",
+    "description": "12 tazas, programable con temporizador y filtro permanente",
+    "code": "CF-PRO-004",
+    "price": 45.75,
+    "stock": 90,
+    "category": "Hogar",
+    "thumbnails": [
+      "/img/cafetera.webp"
+    ]
+  },
+  {
+    "id": 5,
+    "status": true,
+    "title": "Teclado Mecánico RGB",
+    "description": "Switches táctiles, iluminación personalizable y anti-ghosting",
+    "code": "TEC-MECH-RGB",
+    "price": 110,
+    "stock": 40,
+    "category": "Computación",
+    "thumbnails": [
+      "/img/teclado.webp"
+    ]
+  },
+  {
+    "id": 6,
+    "status": true,
+    "title": "Mouse Vertical Ergonómico",
+    "description": "Reduce la tensión en la muñeca, conexión inalámbrica",
+    "code": "MOUSE-VER-ERGO",
+    "price": 35,
+    "stock": 120,
+    "category": "Computación",
+    "thumbnails": [
+      "/img/mouse_ergo.webp"
+    ]
+  },
+  {
+    "id": 7,
+    "status": true,
+    "title": "Set de Ollas Antiadherentes",
+    "description": "Set de 5 piezas con tapas de vidrio templado",
+    "code": "OLLAS-SET-5PZ",
+    "price": 95.5,
+    "stock": 55,
+    "category": "Cocina",
+    "thumbnails": [
+      "/img/ollas.webp"
+    ]
+  },
+  {
+    "id": 8,
+    "status": true,
+    "title": "Estantería Modular de Pino",
+    "description": "5 niveles, fácil de montar, ideal para almacenamiento",
+    "code": "MUEBLE-EST-MOD",
+    "price": 65,
+    "stock": 30,
+    "category": "Muebles",
+    "thumbnails": [
+      "/img/estanteria.webp"
+    ]
+  },
+  {
+    "id": 9,
+    "status": true,
+    "title": "Lámpara de Escritorio LED",
+    "description": "Atenuable, con puerto de carga USB y temperatura de color ajustable",
+    "code": "LAMP-ESC-LED",
+    "price": 28.99,
+    "stock": 85,
+    "category": "Iluminación",
+    "thumbnails": [
+      "/img/lampara_led.webp"
+    ]
+  },
+  {
+    "id": 10,
+    "status": true,
+    "title": "Disco Duro Externo 2TB",
+    "description": "USB 3.0, velocidad de transferencia rápida, carcasa resistente",
+    "code": "HDD-EXT-2TB",
+    "price": 79.99,
+    "stock": 70,
+    "category": "Computación",
+    "thumbnails": [
+      "/img/hdd_externo.webp"
+    ]
+  },
+  {
+    "id": 11,
+    "status": true,
+    "title": "Botella de Agua Deportiva",
+    "description": "Capacidad de 1L, aislamiento al vacío de doble pared",
+    "code": "BOTTLE-DEP-1L",
+    "price": 15,
+    "stock": 200,
+    "category": "Deportes",
+    "thumbnails": [
+      "/img/botella_agua.webp"
+    ]
+  },
+  {
+    "id": 12,
+    "status": true,
+    "title": "nuevo",
+    "description": "Aspira y mapea automáticamente",
+    "code": "ASP-ROB-001",
+    "price": 350.5,
+    "stock": 25,
+    "category": "Hogar",
+    "thumbnails": [
+      "/img/robot.webp"
+    ]
+  }
+]

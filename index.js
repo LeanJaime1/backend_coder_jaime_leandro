@@ -8,6 +8,12 @@ const PORT = 8080
 server.use(express.json())
 
 
+
+const PRODUCTS_FILE ='products.json';
+const CARTS_FILE = './carts.txt';
+
+
+
 //CLASES
 
 //productManager
@@ -18,25 +24,41 @@ class ProductManager {
      
     
 
-    async verProductsAsync () {
+    async getProducts() {
             try {
-            const data = await fs.readFile('products.txt',{ encoding:'utf-8'} )
-            return data
-        }   catch  {
-            console.log('Hubo un error')
+            const data = await fs.readFile(PRODUCTS_FILE,{ encoding:'utf-8'} )
+            return JSON.parse(data.trim() || '[]');
+        }   catch(error)  {
+                if (error.code === 'ENOENT') {
+                    return []; 
+                }
+                console.error('Error al leer productos:', error);
+                    return [];
         }
     }
 
-   async crearNewProductAsync(file,content){
-        try {
-            await fs.writeFile(file, content)
-            console.log('se creo el archivo correctamente!')
-            
-        } catch{ 
-            console.log('Hubo un error!!')
-        }
-    }
+   async addProduct(productData) {
+        const products = await this.getProducts();
 
+        
+        const maxId = products.length > 0 ? Math.max(...products.map(p => p.id)) : 0;
+        const newId = maxId + 1;
+
+        
+        const newProduct = {
+            id: newId,
+            status: true, 
+            ...productData,
+            thumbnails: productData.thumbnails || [] 
+        };
+        
+        
+        products.push(newProduct);
+        const productsStringified = JSON.stringify(products, null, 2);
+        await fs.writeFile(PRODUCTS_FILE, productsStringified);
+        
+        return newProduct;
+    }
 
 }
 const manager = new ProductManager()
@@ -99,7 +121,13 @@ class CartManager {
 }
 
 
-const cartManager = new CartManager('./carts.txt');
+const cartManager = new CartManager(CARTS_FILE);
+
+
+
+
+
+
 
 
 
@@ -108,65 +136,59 @@ const cartManager = new CartManager('./carts.txt');
 
 //ruta de get
 
-server.get('/api/products', (req,res)=>{
-  const data =   manager.verProductsAsync()
-  data
-        .then((respuesta)=>{
-            res.send(respuesta)
-        })
-        .catch(()=>{
-            res.send('Hubo un error!')
-        })
-
-    console.log('Ruta con get') ;   
-
-})
-
+server.get('/api/products', async (req, res) => {
+    try {
+        
+        const products = await manager.getProducts();
+        
+        res.send(products); 
+    } catch (error) {
+        console.error('Error en GET /api/products:', error);
+        res.status(500).send({ error: 'Hubo un error al obtener los productos.' }); 
+    }
+});
 
 
 //ruta de post
-
-server.post('/api/products', (req,res)=>{
+server.post('/api/products', async (req, res) => {
     
-    console.log(req.body)
     
-    const fileName= req.body.file
-    const contentToSave = JSON.stringify(req.body)
+    const requiredFields = ['title', 'description', 'code', 'price', 'stock', 'category'];
+    const productData = req.body;
+
+    const missingField = requiredFields.find(field => !productData[field]);
+
+    if (missingField) {
+       
+        return res.status(400).send({ 
+            error: `Falta el campo obligatorio: ${missingField}` 
+        });
+    }
+
     
-    const data =   manager.crearNewProductAsync(fileName,contentToSave)
-    data
-        .then((respuesta)=>{
-            res.send(respuesta)
-        })
-        .catch(()=>{
-            res.send('Hubo un error!')
-        })
-    
-    console.log('Ruta con post')
-
-})
-
+    try {
+        const newProduct = await manager.addProduct(productData);
+        
+        res.status(201).send(newProduct); 
+    } catch (error) {
+        console.error('Error en POST /api/products:', error);
+        res.status(500).send({ 
+            error: 'Error al intentar guardar el producto en el servidor.' 
+        });
+    }
+});
 
 
-
-
-//ruta post para carrito
-
+//post para carrito
 server.post('/api/carts', async (req,res)=>{
     try {
         const newCart = await cartManager.createCarts()
         res.send(newCart)
     } catch (error) {
-        console.log('Error al crear el carrito')
-
+        console.log('Error al crear el carrito', error)
+        res.status(500).send({ error: 'Error al crear el carrito' })
     }
-    
 })
-
-
-
-
-
 
 
 
