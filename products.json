@@ -141,18 +141,5 @@
     "thumbnails": [
       "/img/botella_agua.webp"
     ]
-  },
-  {
-    "id": 12,
-    "status": true,
-    "title": "nuevo",
-    "description": "Aspira y mapea automáticamente",
-    "code": "ASP-ROB-001",
-    "price": 350.5,
-    "stock": 25,
-    "category": "Hogar",
-    "thumbnails": [
-      "/img/robot.webp"
-    ]
   }
 ]
