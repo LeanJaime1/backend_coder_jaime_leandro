@@ -37,6 +37,13 @@ class ProductManager {
         }
     }
 
+
+    async getProductById(id) {
+        const products = await this.getProducts();
+        const product = products.find(p => p.id === id);
+        return product; 
+    }
+
    async addProduct(productData) {
         const products = await this.getProducts();
 
@@ -177,6 +184,41 @@ server.post('/api/products', async (req, res) => {
         });
     }
 });
+
+
+
+
+//ruta de :id
+
+
+server.get('/:pid', async (req, res) => {
+    try {
+        
+        const productId = parseInt(req.params.pid);
+
+       
+        if (isNaN(productId)) {
+            return res.status(400).json({ error: 'ID de producto inválido. Debe ser un número.' });
+        }
+
+       
+        const product = await manager.getProductById(productId);
+
+        if (product) {
+           
+            res.status(200).json(product);
+        } else {
+           
+            res.status(404).json({ error: `Producto con ID ${productId} no encontrado.` });
+        }
+    } catch (error) {
+        console.error('Error al obtener producto por ID:', error);
+        res.status(500).json({ error: 'Error interno del servidor al buscar el producto.' });
+    }
+});
+
+
+
 
 
 //post para carrito
