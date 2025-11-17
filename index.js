@@ -1,4 +1,5 @@
 import express from "express"
+import handlebars from "express-handlebars"
 import fs from "fs/promises"
 import productRouter from "./routes/product.routes.js"
 import cartRouter from "./routes/cart.routes.js"
@@ -6,6 +7,14 @@ import cartRouter from "./routes/cart.routes.js"
 
 //server
 const server = express()
+
+
+//server.engine("handlebars", motor)
+server.engine('handlebars', handlebars.engine())
+//server.set("view engine", "handlebars")
+server.set('view engine','handlebars')
+
+
 
 
 //conf server
@@ -212,7 +221,7 @@ export const cartManager = new CartManager(CARTS_FILE);
 //RUTAS
 
 //products
-server.use("/api/products", productRouter)
+server.use("/product", productRouter)
 //carts
 server.use("/api/carts", cartRouter)
 

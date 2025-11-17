@@ -1,5 +1,24 @@
 import { manager } from "../index.js";
 
+//controlador de get product view
+export const getProductViewController = async (req, res) => {
+    try {
+        const products = await manager.getProducts(); 
+    
+        res.render('products', { 
+            products: products, 
+            title: "Lista de Productos" 
+        });
+
+    } catch (error) {
+        console.error('Error al renderizar la vista de productos:', error);
+        res.status(500).render('error', { message: 'No se pudo cargar la vista.' });
+    }
+}
+
+
+
+
 //controlador de get
 export const getProductController = async (req, res) => {
     try {
