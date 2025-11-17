@@ -1,13 +1,17 @@
 import express from "express"
 import fs from "fs/promises"
-import rootRouter from "./routes/root.routes.js"
+import productRouter from "./routes/product.routes.js"
 import cartRouter from "./routes/cart.routes.js"
 
 
+//server
 const server = express()
 
+
+//conf server
 const PORT = 8080
 
+//middleware
 server.use(express.json())
 
 const PRODUCTS_FILE ='products.json';
@@ -205,17 +209,12 @@ class CartManager {
 
 export const cartManager = new CartManager(CARTS_FILE);
 
+//RUTAS
 
-
-//PRODUCTS
-server.use("/api/products", rootRouter)
-
-
-
-//CARTS
+//products
+server.use("/api/products", productRouter)
+//carts
 server.use("/api/carts", cartRouter)
-
-
 
 
 

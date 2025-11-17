@@ -1,13 +1,7 @@
-import express from "express"
 import { manager } from "../index.js";
 
-
-const router = express.Router()
-
-
-
-//ruta de get
-router.get('/', async (req, res) => {
+//controlador de get
+export const getProductController = async (req, res) => {
     try {
         const products = await manager.getProducts();
         res.send(products); 
@@ -15,13 +9,11 @@ router.get('/', async (req, res) => {
         console.error('Error en GET /api/products:', error);
         res.status(500).send({ error: 'Hubo un error al obtener los productos.' }); 
     }
-});
+}
 
 
-
-
-//ruta de post
-router.post('/api/products', async (req, res) => {
+//controlador de post
+export const postProductConroller = async (req, res) => {
     const requiredFields = ['title', 'description', 'code', 'price', 'stock', 'category'];
     const productData = req.body;
     const missingField = requiredFields.find(field => !productData[field]);
@@ -37,11 +29,11 @@ router.post('/api/products', async (req, res) => {
         console.error('Error en POST /api/products:', error);
         res.status(500).send({ error: 'Error al intentar guardar el producto en el servidor.' });
     }
-});
+}
 
 
-//ruta para id
-router.get('/api/products/:pid', async (req, res) => {
+//controlador de id
+export const getIdProductController = async (req, res) => {
     try {
         const productId = parseInt(req.params.pid);
 
@@ -59,14 +51,11 @@ router.get('/api/products/:pid', async (req, res) => {
         console.error('Error al obtener producto por ID:', error);
         res.status(500).json({ error: 'Error interno del servidor al buscar el producto.' });
     }
-});
+}
 
 
-
-
-
-//ruta put
-router.put('/api/products/:pid', async (req, res) => {
+//controlador de put
+export const putProductController = async (req, res) => {
     try {
         const productId = parseInt(req.params.pid);
         const updateData = req.body;
@@ -90,15 +79,12 @@ router.put('/api/products/:pid', async (req, res) => {
         console.error('Error al actualizar producto:', error);
         res.status(500).json({ error: 'Error interno del servidor al actualizar el producto.' });
     }
-});
+}
 
 
 
-
-
-
-//ruta delete
-router.delete('/api/products/:pid', async (req, res) => {
+//controlador de delete
+export const deleteProductController = async (req, res) => {
     try {
         const productId = parseInt(req.params.pid);
 
@@ -120,13 +106,4 @@ router.delete('/api/products/:pid', async (req, res) => {
         console.error('Error al eliminar producto:', error);
         res.status(500).json({ error: 'Error interno del servidor al eliminar el producto.' });
     }
-});
-
-
-
-
-
-
-
-
-export default router
+}
