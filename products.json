@@ -128,18 +128,5 @@
     "thumbnails": [
       "/img/hdd_externo.webp"
     ]
-  },
-  {
-    "id": 11,
-    "status": true,
-    "title": "Botella de Agua Deportiva",
-    "description": "Capacidad de 1L, aislamiento al vacío de doble pared",
-    "code": "BOTTLE-DEP-1L",
-    "price": 15,
-    "stock": 200,
-    "category": "Deportes",
-    "thumbnails": [
-      "/img/botella_agua.webp"
-    ]
   }
 ]
