@@ -5,6 +5,7 @@ import handlebars from "express-handlebars"
 import fs from "fs/promises"
 import productRouter from "./routes/product.routes.js"
 import cartRouter from "./routes/cart.routes.js"
+import mongoose from "mongoose"
 
 
 //SERVIDORES
@@ -248,7 +249,16 @@ server.use("/", productRouter)
 server.use("/api/carts", cartRouter)
 
 
-
-servidor.listen(PORT, ()=>{
+//MongoDB
+mongoose.connect("mongodb://localhost:27017/demo-db-1")
+.then(()=>{
+    console.log("conectado a la base de datos")
+    servidor.listen(PORT, ()=>{
     console.log(`Server funcionando en el puerto ${PORT}`)
 })
+})
+.catch((error)=>{
+    console.log("error", error)
+})
+
+
