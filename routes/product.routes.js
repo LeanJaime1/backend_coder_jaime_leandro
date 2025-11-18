@@ -1,12 +1,15 @@
 import express from "express"
-import { deleteProductController, getIdProductController, getProductController, getProductViewController, postProductConroller, putProductController } from "../controllers/product.controllers.js";
+import { deleteProductController, getIdProductController, getProductController, getProductViewController, postProductConroller, putProductController, rootController } from "../controllers/product.controllers.js";
 
 
 const router = express.Router()
 
+//inicio
+router.get("/", rootController);
 
 //product view
-router.get('/', getProductViewController)
+router.get('/product', getProductViewController)
+
 //ruta de get
 router.get('/api/products', getProductController);
 

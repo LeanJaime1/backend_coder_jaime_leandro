@@ -22,6 +22,7 @@ const PORT = 8080
 
 //middleware
 server.use(express.json())
+server.use(express.static("public"))
 
 const PRODUCTS_FILE ='products.json';
 const CARTS_FILE = './carts.json';
@@ -221,7 +222,7 @@ export const cartManager = new CartManager(CARTS_FILE);
 //RUTAS
 
 //products
-server.use("/product", productRouter)
+server.use("/", productRouter)
 //carts
 server.use("/api/carts", cartRouter)
 

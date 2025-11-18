@@ -1,5 +1,20 @@
 import { manager } from "../index.js";
 
+
+//inicio view
+export const rootController = (req, res) => {
+    res.render("index", {
+        title: "Página de Inicio", 
+        description: "Bienvenido a mi eCommerce"
+    });
+}
+
+
+
+
+
+
+
 //controlador de get product view
 export const getProductViewController = async (req, res) => {
     try {
