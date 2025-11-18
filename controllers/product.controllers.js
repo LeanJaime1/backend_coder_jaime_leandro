@@ -5,13 +5,25 @@ import { manager } from "../index.js";
 export const rootController = (req, res) => {
     res.render("index", {
         title: "Página de Inicio", 
-        description: "Bienvenido a mi eCommerce"
+        description: "Mi página Full Stack"
     });
 }
 
 
-
-
+export const realTimeProductsController = async (req, res) => {
+    try {
+        const products = await manager.getProducts();
+        
+        res.render('realTimeProducts', {
+            title: "Productos en Tiempo Real",
+            description: "Vista de productos actualizada con Socket.IO",
+            products: products 
+        });
+    } catch (error) {
+        console.error('Error al renderizar la vista de productos en tiempo real:', error);
+        res.status(500).render('error', { message: 'No se pudo cargar la vista en tiempo real.' });
+    }
+};
 
 
 
@@ -20,7 +32,7 @@ export const getProductViewController = async (req, res) => {
     try {
         const products = await manager.getProducts(); 
     
-        res.render('products', { 
+        res.render('home', { 
             products: products, 
             title: "Lista de Productos" 
         });
@@ -58,13 +70,19 @@ export const postProductConroller = async (req, res) => {
 
     try {
         const newProduct = await manager.addProduct(productData);
+        
+        const updatedProducts = await manager.getProducts();
+        
+        if (req.io) {
+            req.io.emit('productsUpdate', updatedProducts); 
+        }
+
         res.status(201).send(newProduct); 
     } catch (error) {
         console.error('Error en POST /api/products:', error);
         res.status(500).send({ error: 'Error al intentar guardar el producto en el servidor.' });
     }
 }
-
 
 //controlador de id
 export const getIdProductController = async (req, res) => {
@@ -129,6 +147,11 @@ export const deleteProductController = async (req, res) => {
         const deletedProduct = await manager.deleteProduct(productId);
 
         if (deletedProduct) {
+            const updatedProducts = await manager.getProducts();
+            if (req.io) {
+                req.io.emit('productsUpdate', updatedProducts); 
+            }
+            
             res.status(200).json({
                 message: `Producto con ID ${productId} eliminado correctamente.`,
                 deleted: deletedProduct 

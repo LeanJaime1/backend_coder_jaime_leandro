@@ -1,0 +1,32 @@
+<div id="product-list">
+    <p>Cargando productos...</p>
+</div>
+
+
+<script>
+
+    const socket = io();
+    const productList = document.getElementById('product-list');
+
+    socket.on('productsUpdate', (products) => {
+        let html = '';
+        
+       
+        if (products.length === 0) {
+            html = '<p>No hay productos disponibles.</p>';
+        } else {
+            products.forEach(product => {
+                html += `
+                    <div class="product-card">
+                        <h3>${product.title}</h3>
+                        <p>Precio: $${product.price}</p>
+                        <p>Stock: ${product.stock}</p>
+                    </div>
+                `;
+            });
+        }
+
+        
+        productList.innerHTML = html;
+    });
+</script>

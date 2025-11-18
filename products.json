@@ -128,5 +128,53 @@
     "thumbnails": [
       "/img/hdd_externo.webp"
     ]
+  },
+  {
+    "id": 11,
+    "status": true,
+    "title": "Monitor Ultra HD 27 Pulgadas",
+    "description": "Monitor con resolución 4K, ideal para desarrollo y diseño gráfico.",
+    "code": "MNTR4K27",
+    "price": 350.5,
+    "stock": 15,
+    "category": "Electrónica",
+    "thumbnail": "sin-imagen.jpg",
+    "thumbnails": []
+  },
+  {
+    "id": 12,
+    "status": true,
+    "title": "Monitor Ultra HD 27 Pulgadas",
+    "description": "Monitor con resolución 4K, ideal para desarrollo y diseño gráfico.",
+    "code": "MNTR4K27",
+    "price": 350.5,
+    "stock": 15,
+    "category": "Electrónica",
+    "thumbnail": "sin-imagen.jpg",
+    "thumbnails": []
+  },
+  {
+    "id": 13,
+    "status": true,
+    "title": "Monitor Ultra HD 27 Pulgadas",
+    "description": "Monitor con resolución 4K, ideal para desarrollo y diseño gráfico.",
+    "code": "MNTR4K27",
+    "price": 350.5,
+    "stock": 15,
+    "category": "Electrónica",
+    "thumbnail": "sin-imagen.jpg",
+    "thumbnails": []
+  },
+  {
+    "id": 14,
+    "status": true,
+    "title": "Monitor Ultra HD 27 Pulgadas",
+    "description": "Monitor con resolución 4K, ideal para desarrollo y diseño gráfico.",
+    "code": "MNTR4K27",
+    "price": 350.5,
+    "stock": 15,
+    "category": "Electrónica",
+    "thumbnail": "sin-imagen.jpg",
+    "thumbnails": []
   }
 ]

@@ -1,13 +1,34 @@
 import express from "express"
+import http from "http"
+import { Server } from "socket.io"
 import handlebars from "express-handlebars"
 import fs from "fs/promises"
 import productRouter from "./routes/product.routes.js"
 import cartRouter from "./routes/cart.routes.js"
 
 
-//server
+//SERVIDORES
 const server = express()
+const servidor = http.createServer(server)
+const servidorWS = new Server(servidor)
 
+servidorWS.on("connection", (socket)=>{
+    console.log('Nuevo cliente conectado')
+
+    socket.on("mensaje",()=>{
+        socket.emit("respuesta" , "Hola desde el servidor")
+    })
+
+})
+
+
+const socketIoMiddleware = (req, res, next) => {
+    req.io = servidorWS; 
+    next();
+};
+
+
+server.use(socketIoMiddleware);
 
 //server.engine("handlebars", motor)
 server.engine('handlebars', handlebars.engine())
@@ -228,6 +249,6 @@ server.use("/api/carts", cartRouter)
 
 
 
-server.listen(PORT, ()=>{
+servidor.listen(PORT, ()=>{
     console.log(`Server funcionando en el puerto ${PORT}`)
 })

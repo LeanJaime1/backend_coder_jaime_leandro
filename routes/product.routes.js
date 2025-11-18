@@ -1,5 +1,5 @@
 import express from "express"
-import { deleteProductController, getIdProductController, getProductController, getProductViewController, postProductConroller, putProductController, rootController } from "../controllers/product.controllers.js";
+import { deleteProductController, getIdProductController, getProductController, getProductViewController, postProductConroller, putProductController, realTimeProductsController, rootController } from "../controllers/product.controllers.js";
 
 
 const router = express.Router()
@@ -7,8 +7,11 @@ const router = express.Router()
 //inicio
 router.get("/", rootController);
 
+//realTimeProducts
+router.get("/realTimeProducts", realTimeProductsController)
+
 //product view
-router.get('/product', getProductViewController)
+router.get('/home', getProductViewController)
 
 //ruta de get
 router.get('/api/products', getProductController);
