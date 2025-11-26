@@ -1,32 +1,24 @@
-<div id="product-list">
-    <p>Cargando productos...</p>
+<h1>Productos en Tiempo Real</h1>
+
+<div style="background-color: #e9ecef; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+    <h3>Agregar Nuevo Producto</h3>
+    <form id="product-form">
+        <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 10px;">
+            <input type="text" id="title" placeholder="Nombre del producto" required>
+            <input type="text" id="description" placeholder="Descripción" required>
+            <input type="number" id="price" placeholder="Precio" required>
+            <input type="text" id="code" placeholder="Código (ej: ABC1)" required>
+            <input type="number" id="stock" placeholder="Stock" required>
+            <input type="text" id="category" placeholder="Categoría" required>
+        </div>
+        <button type="submit" style="cursor: pointer; padding: 8px 15px; background-color: #28a745; color: white; border: none; border-radius: 4px;">Agregar Producto</button>
+    </form>
 </div>
 
+<hr>
 
-<script>
+<h2>Listado de Productos</h2>
+<div id="product-list" style="display: flex; flex-wrap: wrap; gap: 15px;"></div>
 
-    const socket = io();
-    const productList = document.getElementById('product-list');
-
-    socket.on('productsUpdate', (products) => {
-        let html = '';
-        
-       
-        if (products.length === 0) {
-            html = '<p>No hay productos disponibles.</p>';
-        } else {
-            products.forEach(product => {
-                html += `
-                    <div class="product-card">
-                        <h3>${product.title}</h3>
-                        <p>Precio: $${product.price}</p>
-                        <p>Stock: ${product.stock}</p>
-                    </div>
-                `;
-            });
-        }
-
-        
-        productList.innerHTML = html;
-    });
-</script>
+<script src="/socket.io/socket.io.js"></script>
+<script src="/front.js"></script>
