@@ -8,11 +8,14 @@ import {
     postProductConroller, 
     putProductController, 
     realTimeProductsController, 
-    rootController 
+    rootController, getAllProducts, createProducts
 } from "../controllers/product.controllers.js";
 
 const router = express.Router()
 
+
+router.get("/products", getAllProducts);
+router.post("/products", createProducts)
 
 router.get("/", rootController);
 

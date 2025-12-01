@@ -1,4 +1,12 @@
 import { manager } from "../index.js";
+import ProductModel from "../models/products.models.js";
+
+
+
+
+
+
+
 
 
 //inicio view
@@ -48,6 +56,7 @@ export const getProductViewController = async (req, res) => {
 
 //controlador de get
 export const getProductController = async (req, res) => {
+
     try {
         const products = await manager.getProducts();
         res.send(products); 
@@ -56,6 +65,31 @@ export const getProductController = async (req, res) => {
         res.status(500).send({ error: 'Hubo un error al obtener los productos.' }); 
     }
 }
+
+
+
+//controladores de MongoDB
+export const getAllProducts = async (req,res) => {
+      
+   const respuesta = await ProductModel.find()
+    res.send(respuesta)
+
+}
+
+export const createProducts = async (req,res) => {
+   
+   
+   const {edad, nombre, email} = req.body
+   
+   
+   const respuesta = await ProductModel.create({ edad : edad,
+                          nombre : nombre,
+                          email : email 
+
+    })
+    res.send (respuesta)
+}
+
 
 
 //controlador de post
