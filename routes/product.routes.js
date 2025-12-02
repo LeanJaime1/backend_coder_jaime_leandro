@@ -9,17 +9,18 @@ import {
     putProductController, 
     realTimeProductsController, 
     rootController, getAllProducts, createProducts, updateProducts,
-    deleteProducts
+    deleteProducts,getProductById, getProductsByFilter
 } from "../controllers/product.controllers.js";
 
 const router = express.Router()
 
 //mongoDB
+router.get("/products", getProductsByFilter)
 router.get("/products", getAllProducts);
 router.post("/products", createProducts)
 router.put("/products/:id", updateProducts )
 router.delete("/products/:id", deleteProducts)
-
+router.get("/products/:id", getProductById)
 
 
 

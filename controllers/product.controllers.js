@@ -4,8 +4,24 @@ import ProductModel from "../models/products.models.js";
 
 //controladores de MongoDB
 export const getAllProducts = async (req,res) => {
-      
-   const respuesta = await ProductModel.find()
+    
+    
+
+    //FILTROS Y QUE MOSTRAR EN LA RESPUESTA
+//    const respuesta = await ProductModel.find({
+//     edad : {
+//         $gt : 30
+//     }
+//    },{
+//         nombre : 1,
+//         email : 1,
+//         _id : 0
+//    })
+
+
+    const respuesta = await ProductModel.find({}).skip(1)
+
+
     res.send(respuesta)
 
 }
@@ -52,7 +68,38 @@ export const deleteProducts = async (req,res) => {
     })
 }
 
+export const getProductById = async (req,res) => {
+    
+    const {id} = req.params
 
+  const respuesta = await ProductModel.find({ _id : id})
+
+    res.send({
+        error : false,
+        payload : respuesta
+    })
+}
+
+export const getProductsByFilter = async (req,res) =>{
+
+    const {limit,skip} =req.query
+    
+    
+    console.log("limit", limit)
+    console.log("skip", skip)
+
+
+    const respuesta = await ProductModel.find({}).limit(limit).skip(skip)
+
+
+    res.send({
+        error : false,
+        payload : {
+            respuesta
+        }
+    })
+
+}
 
 
 
