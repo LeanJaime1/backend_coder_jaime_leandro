@@ -6,10 +6,18 @@ import validator from "validator"
 
 //Schema (el id se crea automaticamente)
 const productSchema = new mongoose.Schema({
-    nombre : String,
-    edad : Number,
+    nombre : {
+        type : String,
+        required : true,
+    },
+    edad : {
+        type : Number,
+        required : true,
+    },
     email : {
         type : String,
+        required : true,
+        unique : true,
         validate : {
             validator : (valor) => {
                 const esValido = validator.isEmail(valor)
@@ -30,3 +38,6 @@ const ProductModel = mongoose.model("Product", productSchema)
 
 
 export default ProductModel;
+
+
+

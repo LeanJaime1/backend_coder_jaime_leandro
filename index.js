@@ -97,7 +97,7 @@ server.use("/", productRouter)
 server.use("/api/carts", cartRouter)
 
 
-//MongoDB
+//Conexión a MongoDB
 mongoose.connect("mongodb://localhost:27017/demo-db-1")
 .then(()=>{
     console.log("conectado a la base de datos")

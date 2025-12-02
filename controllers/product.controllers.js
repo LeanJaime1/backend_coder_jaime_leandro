@@ -2,72 +2,6 @@ import { manager } from "../index.js";
 import ProductModel from "../models/products.models.js";
 
 
-
-
-
-
-
-
-
-//inicio view
-export const rootController = (req, res) => {
-    res.render("index", {
-        title: "Página de Inicio", 
-        description: "Mi página Full Stack"
-    });
-}
-
-
-export const realTimeProductsController = async (req, res) => {
-    try {
-        const products = await manager.getProducts();
-        
-        res.render('realTimeProducts', {
-            title: "Productos en Tiempo Real",
-            description: "Vista de productos actualizada con Socket.IO",
-            products: products 
-        });
-    } catch (error) {
-        console.error('Error al renderizar la vista de productos en tiempo real:', error);
-        res.status(500).render('error', { message: 'No se pudo cargar la vista en tiempo real.' });
-    }
-};
-
-
-
-//controlador de get product view
-export const getProductViewController = async (req, res) => {
-    try {
-        const products = await manager.getProducts(); 
-    
-        res.render('home', { 
-            products: products, 
-            title: "Lista de Productos" 
-        });
-
-    } catch (error) {
-        console.error('Error al renderizar la vista de productos:', error);
-        res.status(500).render('error', { message: 'No se pudo cargar la vista.' });
-    }
-}
-
-
-
-
-//controlador de get
-export const getProductController = async (req, res) => {
-
-    try {
-        const products = await manager.getProducts();
-        res.send(products); 
-    } catch (error) {
-        console.error('Error en GET /api/products:', error);
-        res.status(500).send({ error: 'Hubo un error al obtener los productos.' }); 
-    }
-}
-
-
-
 //controladores de MongoDB
 export const getAllProducts = async (req,res) => {
       
@@ -90,7 +24,93 @@ export const createProducts = async (req,res) => {
     res.send (respuesta)
 }
 
+export const updateProducts = async (req,res) => {
+    const {id} = req.params
+    const {nombre} = req.body
+    
+    console.log(id)
+    console.log(nombre)
 
+
+    const resultado = await ProductModel.updateOne({_id : id},{nombre : nombre})
+
+    res.send({
+        error : false,
+        payload : resultado
+    })
+}
+
+export const deleteProducts = async (req,res) => {
+
+    const {id} = req.params
+
+    const resultado = await ProductModel.deleteOne({ _id : id})
+
+    res.send({
+        error : false ,
+        payload : id
+    })
+}
+
+
+
+
+
+
+//inicio view
+export const rootController = (req, res) => {
+    res.render("index", {
+        title: "Página de Inicio", 
+        description: "Mi página Full Stack"
+    });
+}
+
+export const realTimeProductsController = async (req, res) => {
+    try {
+        const products = await manager.getProducts();
+        
+        res.render('realTimeProducts', {
+            title: "Productos en Tiempo Real",
+            description: "Vista de productos actualizada con Socket.IO",
+            products: products 
+        });
+    } catch (error) {
+        console.error('Error al renderizar la vista de productos en tiempo real:', error);
+        res.status(500).render('error', { message: 'No se pudo cargar la vista en tiempo real.' });
+    }
+};
+
+//controlador de get product view
+export const getProductViewController = async (req, res) => {
+    try {
+        const products = await manager.getProducts(); 
+    
+        res.render('home', { 
+            products: products, 
+            title: "Lista de Productos" 
+        });
+
+    } catch (error) {
+        console.error('Error al renderizar la vista de productos:', error);
+        res.status(500).render('error', { message: 'No se pudo cargar la vista.' });
+    }
+}
+
+
+
+
+
+//controlador de get
+export const getProductController = async (req, res) => {
+
+    try {
+        const products = await manager.getProducts();
+        res.send(products); 
+    } catch (error) {
+        console.error('Error en GET /api/products:', error);
+        res.status(500).send({ error: 'Hubo un error al obtener los productos.' }); 
+    }
+}
 
 //controlador de post
 export const postProductConroller = async (req, res) => {
@@ -139,7 +159,6 @@ export const getIdProductController = async (req, res) => {
     }
 }
 
-
 //controlador de put
 export const putProductController = async (req, res) => {
     try {
@@ -166,8 +185,6 @@ export const putProductController = async (req, res) => {
         res.status(500).json({ error: 'Error interno del servidor al actualizar el producto.' });
     }
 }
-
-
 
 //controlador de delete
 export const deleteProductController = async (req, res) => {
