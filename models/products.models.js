@@ -1,43 +1,26 @@
 import mongoose from "mongoose";
-import validator from "validator"
+import mongoosePaginate from "mongoose-paginate-v2";
 
-
-
-
-//Schema (el id se crea automaticamente)
 const productSchema = new mongoose.Schema({
-    nombre : {
-        type : String,
-        required : true,
-    },
-    edad : {
-        type : Number,
-        required : true,
-    },
-    email : {
-        type : String,
-        required : true,
-        unique : true,
-        validate : {
-            validator : (valor) => {
-                const esValido = validator.isEmail(valor)
-                console.log("esValido", esValido)
+    title: { type: String, required: true },
+    description: { type: String, required: true },
+    code: { type: String, required: true, unique: true },
+    price: { type: Number, required: true },
+    status: { type: Boolean, default: true },
+    stock: { type: Number, required: true },
+    category: { type: String, required: true },
+    thumbnails: { type: [String], default: [] }
+});
 
-                return esValido;
-            },
-            message : ""
-        } 
-     }
-})
- 
+productSchema.plugin(mongoosePaginate);
 
+productSchema.set('toJSON', {
+    transform: function (doc, ret) {
+        ret.id = ret._id;
+        delete ret.__v;
+        return ret;
+    }
+});
 
-//Model
-
-const ProductModel = mongoose.model("Product", productSchema)
-
-
+const ProductModel = mongoose.model("products", productSchema);
 export default ProductModel;
-
-
-

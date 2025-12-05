@@ -1,74 +1,119 @@
-import { cartManager, manager } from "../index.js"
+import CartModel from '../models/cart.models.js';
+import { cartManager } from "../index.js";
 
 
-//post para carrito
-export const postCartController = async (req,res)=>{
+export const renderCartView = async (req, res) => {
+    const { cid } = req.params;
     try {
-        const newCart = await cartManager.createCarts()
-        res.send(newCart)
-    } catch (error) {
-        console.log('Error al crear el carrito', error)
-        res.status(500).send({ error: 'Error al crear el carrito' })
-    }
-}
+        console.log("\n--- DEBUG START ---");
+        console.log("1. Buscando carrito con ID:", cid);
 
-
-
-//get para carrito
-export const getCartController = async (req, res) => {
-    try {
-        const cartId = parseInt(req.params.cid);
-
-        if (isNaN(cartId)) {
-            return res.status(400).json({ error: 'ID de carrito inválido. Debe ser un número.' });
-        }
-
-        const cart = await cartManager.getCartById(cartId);
-
-        if (cart) {
-            
-            res.status(200).json(cart.products);
-        } else {
-            res.status(404).json({ error: `Carrito con ID ${cartId} no encontrado.` });
-        }
-    } catch (error) {
-        console.error('Error al obtener carrito por ID:', error);
-        res.status(500).json({ error: 'Error interno del servidor al buscar el carrito.' });
-    }
-}
-
-
-
-//agregar producto al carrito
-export const addCartController = async (req, res) => {
-    try {
-        const cartId = parseInt(req.params.cid);
-        const productId = parseInt(req.params.pid);
-
-        if (isNaN(cartId) || isNaN(productId)) {
-            return res.status(400).json({ error: 'IDs de carrito y/o producto inválidos. Deben ser números.' });
-        }
-
-        const product = await manager.getProductById(productId);
-        if (!product) {
-            return res.status(404).json({ error: `Producto con ID ${productId} no encontrado.` });
-        }
-
-   
-        const result = await cartManager.addProductToCart(cartId, productId);
-
-        if (result.status === 404) {
-            return res.status(404).json({ error: result.message });
-        }
+        const cart = await CartModel.findById(cid)
+            .populate('products.product')
+            .lean();
 
        
-        res.status(200).json({
-            message: `Producto ID ${productId} agregado/actualizado en carrito ID ${cartId}.`,
-            cart: result.cart 
+        console.log("2. Resultado de la base de datos:", JSON.stringify(cart, null, 2));
+
+        if (!cart) {
+            console.log("3. El carrito es NULL (No existe)");
+            return res.status(404).render('errors', { error: 'Carrito no encontrado' });
+        }
+
+        if(cart.products.length > 0) {
+            cart.products.forEach((item, index) => {
+                console.log(`   - Producto ${index}:`, item.product);
+            });
+        } else {
+            console.log("   - El array de productos está vacío.");
+        }
+
+        console.log("--- DEBUG END ---\n");
+
+        res.render('cart', {
+            products: cart.products,
+            cid: cart._id,
+            title: "Mi Carrito"
         });
 
     } catch (error) {
-        console.error('Error al agregar producto al carrito:', error);
-        res.status(500).json({ error: 'Error interno del servidor al modificar el carrito.' });
+        console.error("ERROR FATAL:", error);
+        res.status(500).send("Error al mostrar el carrito");
     }
 }
+
+export const postCartController = async (req, res) => {
+    try {
+        const newCart = await cartManager.createCart();
+        res.send(newCart);
+    } catch (error) {
+        res.status(500).send({ error: 'Error al crear carrito' });
+    }
+}
+
+export const getCartController = async (req, res) => {
+    try {
+        const { cid } = req.params;
+        const cart = await cartManager.getCartById(cid);
+        if (cart) {
+            res.status(200).json(cart.products);
+        } else {
+            res.status(404).json({ error: `Carrito no encontrado.` });
+        }
+    } catch (error) {
+        res.status(500).json({ error: 'Error interno.' });
+    }
+}
+
+export const addCartController = async (req, res) => {
+    try {
+        const { cid, pid } = req.params;
+        const cart = await cartManager.addProductToCart(cid, pid);
+        if (!cart) return res.status(404).json({ error: `Carrito no encontrado.` });
+        res.status(200).json({ message: `Producto agregado.`, cart: cart });
+    } catch (error) {
+        res.status(500).json({ error: 'Error interno.' });
+    }
+}
+
+export const deleteProductFromCartController = async (req, res) => {
+    try {
+        const { cid, pid } = req.params;
+        const cart = await cartManager.deleteProductFromCart(cid, pid);
+        res.status(200).send({ status: "success", payload: cart });
+    } catch (error) {
+        res.status(500).send({ error: "Error interno." });
+    }
+};
+
+export const updateCartController = async (req, res) => {
+    try {
+        const { cid } = req.params;
+        const { products } = req.body; 
+        const cart = await cartManager.updateCart(cid, products);
+        res.status(200).send({ status: "success", payload: cart });
+    } catch (error) {
+        res.status(500).send({ error: "Error interno." });
+    }
+};
+
+export const updateProductQuantityController = async (req, res) => {
+    try {
+        const { cid, pid } = req.params;
+        const { quantity } = req.body;
+        const cart = await cartManager.updateProductQuantity(cid, pid, quantity);
+        res.status(200).send({ status: "success", payload: cart });
+    } catch (error) {
+        res.status(500).send({ error: "Error interno." });
+    }
+};
+
+export const clearCartController = async (req, res) => {
+    try {
+        const { cid } = req.params;
+        const cart = await cartManager.clearCart(cid);
+        res.status(200).send({ status: "success", payload: cart });
+    } catch (error) {
+        res.status(500).send({ error: "Error interno." });
+    }
+};

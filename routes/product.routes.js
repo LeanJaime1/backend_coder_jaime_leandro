@@ -1,5 +1,4 @@
 import express from "express"
-
 import { 
     deleteProductController, 
     getIdProductController, 
@@ -8,36 +7,25 @@ import {
     postProductConroller, 
     putProductController, 
     realTimeProductsController, 
-    rootController, getAllProducts, createProducts, updateProducts,
-    deleteProducts,getProductById, getProductsByFilter
+    rootController,
+    renderProductsController,
+    renderCartController
 } from "../controllers/product.controllers.js";
 
 const router = express.Router()
 
-//mongoDB
-router.get("/products", getProductsByFilter)
-router.get("/products", getAllProducts);
-router.post("/products", createProducts)
-router.put("/products/:id", updateProducts )
-router.delete("/products/:id", deleteProducts)
-router.get("/products/:id", getProductById)
-
-
-
+// Vistas
 router.get("/", rootController);
+router.get("/realTimeProducts", realTimeProductsController);
+router.get('/products', renderProductsController);
+router.get('/cart/:cid', renderCartController);
+router.get('/home', getProductViewController);
 
-router.get("/realTimeProducts", realTimeProductsController)
-
-router.get('/home', getProductViewController)
-
+// API
 router.get('/api/products', getProductController);
-
 router.post('/api/products', postProductConroller);
-
 router.get('/api/products/:pid', getIdProductController);
-
 router.put('/api/products/:pid', putProductController);
-
 router.delete('/api/products/:pid', deleteProductController);
 
 export default router

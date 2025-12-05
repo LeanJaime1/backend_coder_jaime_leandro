@@ -1,0 +1,37 @@
+<h1>{{title}}</h1>
+
+<div class="cart-container">
+    {{#if products.length}}
+        <div class="cart-list">
+            {{#each products}}
+                <div class="cart-item">
+                    <div class="item-info">
+                        <h3>{{this.product.title}}</h3>
+                        <p>Precio unitario: ${{this.product.price}}</p>
+                        <p>Categoría: {{this.product.category}}</p>
+                    </div>
+                    
+                    <div class="item-quantity">
+                        <p>Cantidad: <strong>{{this.quantity}}</strong></p>
+                    </div>
+
+                    <div class="item-actions">
+                         <p>Precio Unitario: ${{this.product.price}}</p>
+                    </div>
+                </div>
+            {{/each}}
+        </div>
+
+        <div class="cart-summary">
+            <h2>Resumen de Compra</h2>
+            <button class="btn-checkout">Finalizar Compra</button>
+        </div>
+
+    {{else}}
+        <div class="empty-cart">
+            <p>Tu carrito está vacío 😔</p>
+            <a href="/products" class="btn-add">Ir a comprar productos</a>
+        </div>
+    {{/if}}
+</div>
+

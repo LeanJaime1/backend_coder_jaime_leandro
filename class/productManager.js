@@ -1,97 +1,74 @@
-import fs from "fs/promises"; 
+import ProductModel from "../models/products.models.js";
 
 export class ProductManager {
-    
-    
-    constructor(path) {
-        this.path = path;
-    }
-      
-    async getProducts() {
+    async getProducts({ limit = 10, page = 1, sort, query } = {}) {
         try {
-            
-            const data = await fs.readFile(this.path, { encoding: 'utf-8' });
-            return JSON.parse(data.trim() || '[]');
-        } catch (error) {
-            if (error.code === 'ENOENT') {
-                return [];
+            let queryOptions = {};
+
+            if (query) {
+                queryOptions = {
+                    $or: [
+                        { category: { $regex: query, $options: "i" } },
+                        
+                        ...(query.toLowerCase() === 'true' || query.toLowerCase() === 'false' 
+                            ? [{ status: query.toLowerCase() === 'true' }] 
+                            : [])
+                    ]
+                };
             }
-            console.error('Error al leer productos:', error);
-            return [];
+
+            const sortOptions = {};
+            if (sort) {
+                if (sort === 'asc') sortOptions.price = 1;
+                if (sort === 'desc') sortOptions.price = -1;
+            }
+
+            const result = await ProductModel.paginate(queryOptions, {
+                limit: limit,
+                page: page,
+                sort: sortOptions,
+                lean: true 
+            });
+            return result;
+        } catch (error) {
+            console.log("Error al obtener productos:", error);
+            throw error;
+        }
+    }
+
+    async addProduct(product) {
+        try {
+            return await ProductModel.create(product);
+        } catch (error) {
+            console.log("Error al agregar producto:", error);
+            throw error;
         }
     }
 
     async getProductById(id) {
-        const products = await this.getProducts();
-        
-        const product = products.find(p => p.id === id);
-        return product;
-    }
-
-    async updateProduct(id, updateData) {
-        const products = await this.getProducts();
-    
-        const index = products.findIndex(p => p.id === id);
-
-        if (index === -1) {
+        try {
+            return await ProductModel.findById(id).lean();
+        } catch (error) {
+            console.log("Error al buscar producto por ID:", error);
             return null;
         }
-
-        const currentProduct = products[index];
-
-        const updatedProduct = {
-            ...currentProduct,
-            ...updateData,
-            id: currentProduct.id 
-        };
-    
-        products[index] = updatedProduct;
-        
-        const productsStringified = JSON.stringify(products, null, 2);
-      
-        await fs.writeFile(this.path, productsStringified);
-
-        return updatedProduct;
     }
-    
+
+    async updateProduct(id, productUpdate) {
+        try {
+            return await ProductModel.findByIdAndUpdate(id, productUpdate, { new: true }).lean();
+        } catch (error) {
+            console.log("Error al actualizar producto:", error);
+            return null;
+        }
+    }
+
     async deleteProduct(id) {
-        const products = await this.getProducts();
-        const index = products.findIndex(p => p.id === id);
-
-        if (index === -1) {
+        try {
+            return await ProductModel.findByIdAndDelete(id);
+        } catch (error) {
+            console.log("Error al eliminar producto:", error);
             return null;
         }
-      
-        const deletedProducts = products.splice(index, 1);
-        const deletedProduct = deletedProducts[0];
-       
-        const productsStringified = JSON.stringify(products, null, 2);
-      
-        await fs.writeFile(this.path, productsStringified);
-
-        return deletedProduct;
-    }
-
-    async addProduct(productData) {
-        const products = await this.getProducts();
-        
-       
-        const maxId = products.length > 0 ? Math.max(...products.map(p => p.id)) : 0;
-        const newId = maxId + 1;
-        
-        const newProduct = {
-            id: newId,
-            status: true,
-            ...productData,
-            thumbnails: productData.thumbnails || []
-        };
-        
-        products.push(newProduct);
-        const productsStringified = JSON.stringify(products, null, 2);
-        
-       
-        await fs.writeFile(this.path, productsStringified);
-        
-        return newProduct;
     }
 }

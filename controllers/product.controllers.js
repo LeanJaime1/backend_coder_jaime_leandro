@@ -1,264 +1,146 @@
-import { manager } from "../index.js";
-import ProductModel from "../models/products.models.js";
+import { manager, cartManager } from "../index.js"; 
 
+//VISTAS
 
-//controladores de MongoDB
-export const getAllProducts = async (req,res) => {
-    
-    
-
-    //FILTROS Y QUE MOSTRAR EN LA RESPUESTA
-//    const respuesta = await ProductModel.find({
-//     edad : {
-//         $gt : 30
-//     }
-//    },{
-//         nombre : 1,
-//         email : 1,
-//         _id : 0
-//    })
-
-
-    const respuesta = await ProductModel.find({}).skip(1)
-
-
-    res.send(respuesta)
-
-}
-
-export const createProducts = async (req,res) => {
-   
-   
-   const {edad, nombre, email} = req.body
-   
-   
-   const respuesta = await ProductModel.create({ edad : edad,
-                          nombre : nombre,
-                          email : email 
-
-    })
-    res.send (respuesta)
-}
-
-export const updateProducts = async (req,res) => {
-    const {id} = req.params
-    const {nombre} = req.body
-    
-    console.log(id)
-    console.log(nombre)
-
-
-    const resultado = await ProductModel.updateOne({_id : id},{nombre : nombre})
-
-    res.send({
-        error : false,
-        payload : resultado
-    })
-}
-
-export const deleteProducts = async (req,res) => {
-
-    const {id} = req.params
-
-    const resultado = await ProductModel.deleteOne({ _id : id})
-
-    res.send({
-        error : false ,
-        payload : id
-    })
-}
-
-export const getProductById = async (req,res) => {
-    
-    const {id} = req.params
-
-  const respuesta = await ProductModel.find({ _id : id})
-
-    res.send({
-        error : false,
-        payload : respuesta
-    })
-}
-
-export const getProductsByFilter = async (req,res) =>{
-
-    const {limit,skip} =req.query
-    
-    
-    console.log("limit", limit)
-    console.log("skip", skip)
-
-
-    const respuesta = await ProductModel.find({}).limit(limit).skip(skip)
-
-
-    res.send({
-        error : false,
-        payload : {
-            respuesta
-        }
-    })
-
-}
-
-
-
-
-//inicio view
-export const rootController = (req, res) => {
-    res.render("index", {
-        title: "Página de Inicio", 
-        description: "Mi página Full Stack"
-    });
-}
-
-export const realTimeProductsController = async (req, res) => {
+export const renderProductsController = async (req, res) => {
     try {
-        const products = await manager.getProducts();
-        
-        res.render('realTimeProducts', {
-            title: "Productos en Tiempo Real",
-            description: "Vista de productos actualizada con Socket.IO",
-            products: products 
+        const { limit = 10, page = 1, sort, query } = req.query;
+
+        const products = await manager.getProducts({
+            limit: parseInt(limit),
+            page: parseInt(page),
+            sort,
+            query
         });
+
+        res.render('products', {
+            products: products.docs,
+            totalPages: products.totalPages,
+            prevPage: products.prevPage,
+            nextPage: products.nextPage,
+            page: products.page,
+            hasPrevPage: products.hasPrevPage,
+            hasNextPage: products.hasNextPage,
+            prevLink: products.hasPrevPage ? `/products?page=${products.prevPage}&limit=${limit}&sort=${sort || ''}&query=${query || ''}` : null,
+            nextLink: products.hasNextPage ? `/products?page=${products.nextPage}&limit=${limit}&sort=${sort || ''}&query=${query || ''}` : null,
+            title: "Listado de Productos"
+        });
+
     } catch (error) {
-        console.error('Error al renderizar la vista de productos en tiempo real:', error);
-        res.status(500).render('error', { message: 'No se pudo cargar la vista en tiempo real.' });
+        console.error("Error al renderizar productos:", error);
+        res.status(500).send("Error de servidor");
     }
 };
 
-//controlador de get product view
-export const getProductViewController = async (req, res) => {
+export const renderCartController = async (req, res) => {
     try {
-        const products = await manager.getProducts(); 
-    
-        res.render('home', { 
-            products: products, 
-            title: "Lista de Productos" 
+        const { cid } = req.params;
+        const cart = await cartManager.getCartById(cid);
+
+        if (!cart) {
+            return res.status(404).render('error', { message: "Carrito no encontrado" });
+        }
+
+        res.render('cart', {
+            title: "Mi Carrito",
+            cartId: cid,
+            products: cart.products 
         });
 
     } catch (error) {
-        console.error('Error al renderizar la vista de productos:', error);
-        res.status(500).render('error', { message: 'No se pudo cargar la vista.' });
+        console.error("Error al renderizar carrito:", error);
+        res.status(500).send("Error de servidor");
     }
+};
+
+export const rootController = (req, res) => {
+    res.render("index", { title: "Inicio" });
+}
+
+export const realTimeProductsController = async (req, res) => {
+    res.render('realTimeProducts', { title: "Tiempo Real" });
+};
+
+export const getProductViewController = async (req, res) => {
+    
+    res.redirect('/products');
 }
 
 
+//API
 
-
-
-//controlador de get
 export const getProductController = async (req, res) => {
-
     try {
-        const products = await manager.getProducts();
-        res.send(products); 
+        let { limit, page, sort, query } = req.query;
+        const products = await manager.getProducts({ 
+            limit: parseInt(limit) || 10, 
+            page: parseInt(page) || 1, 
+            sort, 
+            query 
+        });
+
+        const prevLink = products.hasPrevPage 
+            ? `/api/products?page=${products.prevPage}&limit=${limit || 10}&sort=${sort || ''}&query=${query || ''}` 
+            : null;
+        const nextLink = products.hasNextPage 
+            ? `/api/products?page=${products.nextPage}&limit=${limit || 10}&sort=${sort || ''}&query=${query || ''}` 
+            : null;
+
+        res.send({
+            status: "success",
+            payload: products.docs,
+            totalPages: products.totalPages,
+            prevPage: products.prevPage,
+            nextPage: products.nextPage,
+            page: products.page,
+            hasPrevPage: products.hasPrevPage,
+            hasNextPage: products.hasNextPage,
+            prevLink: prevLink,
+            nextLink: nextLink
+        });
     } catch (error) {
-        console.error('Error en GET /api/products:', error);
-        res.status(500).send({ error: 'Hubo un error al obtener los productos.' }); 
+        res.status(500).send({ status: "error", error: 'Error al obtener productos.' });
     }
 }
 
-//controlador de post
-export const postProductConroller = async (req, res) => {
-    const requiredFields = ['title', 'description', 'code', 'price', 'stock', 'category'];
-    const productData = req.body;
-    const missingField = requiredFields.find(field => !productData[field]);
-
-    if (missingField) {
-        return res.status(400).send({ error: `Falta el campo obligatorio: ${missingField}` });
-    }
-
-    try {
-        const newProduct = await manager.addProduct(productData);
-        
-        const updatedProducts = await manager.getProducts();
-        
-        if (req.io) {
-            req.io.emit('productsUpdate', updatedProducts); 
-        }
-
-        res.status(201).send(newProduct); 
-    } catch (error) {
-        console.error('Error en POST /api/products:', error);
-        res.status(500).send({ error: 'Error al intentar guardar el producto en el servidor.' });
-    }
-}
-
-//controlador de id
 export const getIdProductController = async (req, res) => {
     try {
-        const productId = parseInt(req.params.pid);
-
-        if (isNaN(productId)) {
-            return res.status(400).json({ error: 'ID de producto inválido. Debe ser un número.' });
-        }
-        const product = await manager.getProductById(productId);
-
-        if (product) {
-            res.status(200).json(product);
-        } else {
-            res.status(404).json({ error: `Producto con ID ${productId} no encontrado.` });
-        }
+        const product = await manager.getProductById(req.params.pid);
+        if (product) res.status(200).json(product);
+        else res.status(404).json({ error: `Producto no encontrado.` });
     } catch (error) {
-        console.error('Error al obtener producto por ID:', error);
-        res.status(500).json({ error: 'Error interno del servidor al buscar el producto.' });
+        res.status(500).json({ error: 'Error interno.' });
     }
 }
 
-//controlador de put
+export const postProductConroller = async (req, res) => {
+    try {
+        const newProduct = await manager.addProduct(req.body);
+        res.status(201).send(newProduct); 
+    } catch (error) {
+        res.status(500).send({ error: 'Error al guardar.' });
+    }
+}
+
 export const putProductController = async (req, res) => {
     try {
-        const productId = parseInt(req.params.pid);
         const updateData = req.body;
-
-        if (isNaN(productId)) {
-            return res.status(400).json({ error: 'ID de producto inválido. Debe ser un número.' });
-        }
-
-        if (updateData.id) {
-             delete updateData.id;
-        }
-
-        const updatedProduct = await manager.updateProduct(productId, updateData);
-
-        if (updatedProduct) {
-            res.status(200).json(updatedProduct);
-        } else {
-            res.status(404).json({ error: `Producto con ID ${productId} no encontrado para actualizar.` });
-        }
+        if (updateData._id) delete updateData._id;
+        const updatedProduct = await manager.updateProduct(req.params.pid, updateData);
+        if (updatedProduct) res.status(200).json(updatedProduct);
+        else res.status(404).json({ error: `Producto no encontrado.` });
     } catch (error) {
-        console.error('Error al actualizar producto:', error);
-        res.status(500).json({ error: 'Error interno del servidor al actualizar el producto.' });
+        res.status(500).json({ error: 'Error interno.' });
     }
 }
 
-//controlador de delete
 export const deleteProductController = async (req, res) => {
     try {
-        const productId = parseInt(req.params.pid);
-
-        if (isNaN(productId)) {
-            return res.status(400).json({ error: 'ID de producto inválido. Debe ser un número.' });
-        }
-
-        const deletedProduct = await manager.deleteProduct(productId);
-
+        const deletedProduct = await manager.deleteProduct(req.params.pid);
         if (deletedProduct) {
-            const updatedProducts = await manager.getProducts();
-            if (req.io) {
-                req.io.emit('productsUpdate', updatedProducts); 
-            }
-            
-            res.status(200).json({
-                message: `Producto con ID ${productId} eliminado correctamente.`,
-                deleted: deletedProduct 
-            });
-        } else {
-            res.status(404).json({ error: `Producto con ID ${productId} no encontrado para eliminar.` });
-        }
+            res.status(200).json({ message: `Eliminado.`, deleted: deletedProduct });
+        } else res.status(404).json({ error: `Producto no encontrado.` });
     } catch (error) {
-        console.error('Error al eliminar producto:', error);
-        res.status(500).json({ error: 'Error interno del servidor al eliminar el producto.' });
+        res.status(500).json({ error: 'Error interno.' });
     }
 }
